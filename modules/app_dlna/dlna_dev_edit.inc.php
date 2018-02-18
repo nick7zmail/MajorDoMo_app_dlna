@@ -5,7 +5,7 @@
   if ($this->owner->name=='panel') {
    $out['CONTROLPANEL']=1;
   }
-  $table_name='DLNA_DEV';
+  $table_name='dlna_dev';
   $rec=SQLSelectOne("SELECT * FROM $table_name WHERE ID='$id'");
   if ($this->mode=='update') {
    $ok=1;

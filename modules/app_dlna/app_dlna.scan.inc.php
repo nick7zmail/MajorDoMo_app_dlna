@@ -11,7 +11,7 @@ if ($res[0]['ID']) {
 		$rec['UUID']=$obj['UUID'];
 		$rec['TITLE']=$obj['TITLE'];
 		$rec['JSON_DATA']=json_encode($obj['JDATA']);
-		$rec_dub=SQLSelect("SELECT * FROM DLNA_DEV WHERE UUID='".$obj['UUID']."'");
+		$rec_dub=SQLSelect("SELECT * FROM dlna_dev WHERE UUID='".$obj['UUID']."'");
 		$total_dub=count($rec_dub);
 		if(!$total_dub) {
 			SQLInsert('dlna_dev', $rec);

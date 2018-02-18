@@ -15,6 +15,7 @@ $renderer=json_decode($properties[$i]['JSON_DATA'], true);
 		 } elseif($cmd=='unpause'){
 			$result = $remote->unpause();
 		 }
+		 debmes($result);
 		}		
 	} elseif ($property=='playUrl') {
 		$url = $value;
