@@ -1,0 +1,21 @@
+{
+    "name": "jalder/upnp",
+    "description": "UPnP utilities for PHP applications",
+    "license": "MIT",
+    "keywords": ["upnp", "chromecast", "roku", "ssdp", "xbmc", "kodi"],
+    "authors": [
+        {
+            "name": "John Alder",
+            "email": "jack@jalder.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "4.1.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "jalder\\Upnp\\": "src"
+        }
+    }
+}

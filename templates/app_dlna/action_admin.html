@@ -1,0 +1,72 @@
+
+<!-- table zwave_devices search -->
+<div>
+ [ <a href="#" onClick="$('#api_settings').toggle();return false;"><#LANG_SETUP#></a> ]
+</div>
+<div style="display:none" id='api_settings'>
+&nbsp;
+<form action="?" method="post" enctype="multipart/form-data" name="frmEdit" class="form-horizontal">
+<fieldset>
+<div class="form-actions">
+<button type="submit" name="subm" value="Submit" class="btn btn-primary"><#LANG_UPDATE#></button>
+<input type="hidden" name="view_mode" value="update_settings">
+<input type="hidden" name="mode" value="update">
+</div>
+</fieldset>
+</form>
+</div>
+ <!-- action usual -->
+ [#if DATA_SOURCE="dlna_dev" || DATA_SOURCE=""#]
+ <!-- table dlna_dev search -->
+ [#if VIEW_MODE="search_dlna_dev" || VIEW_MODE=""#]
+  [#inc dlna_dev_search_admin.html#]
+ [#endif VIEW_MODE#]
+ <!-- / table dlna_dev search -->
+ <!-- table dlna_dev edit -->
+ [#if VIEW_MODE="edit_dlna_dev"#]
+   [#if ID!=""#]
+   [#if TITLE!=""#]<h4>[#TITLE#]</h4>[#endif TITLE#]
+<ul class="nav nav-tabs">
+  <li[#if TAB=""#] class="active"[#endif#]>
+   <a href="?data_source=<#DATA_SOURCE#>&view_mode=<#VIEW_MODE#>&id=<#ID#>&tab="><#LANG_GENERAL#></a>
+  </li>
+  <li[#if TAB="data"#] class="active"[#endif#]>
+   <a href="?data_source=<#DATA_SOURCE#>&view_mode=<#VIEW_MODE#>&id=<#ID#>&tab=data">&#060#LANG_DATA#&#062</a>
+  </li>
+</ul>
+&nbsp;<br/>
+   [#endif ID#]
+   [#if TAB=""#]
+    [#inc dlna_dev_edit_default.html#]
+   [#endif TAB#]
+   [#if TAB="data"#]
+    [#inc dlna_dev_edit_data.html#]
+   [#endif TAB#]
+ [#endif VIEW_MODE#]
+ <!-- / table dlna_dev edit -->
+ <!-- table dlna_dev view --> 
+ [#if VIEW_MODE="view_dlna_dev"#]
+   [#if TAB=""#]
+    [#inc dlna_dev_view_default.html#]
+   [#endif TAB#]
+ [#endif VIEW_MODE#]
+ <!-- / table dlna_dev view -->
+ [#endif DATA_SOURCE#]
+ <!-- action usual -->
+ [#if DATA_SOURCE="dlna_prop"#]
+ <!-- table dlna_prop search -->
+ [#if VIEW_MODE="search_dlna_prop" || VIEW_MODE=""#]
+  [#inc dlna_prop_search_admin.html#]
+ [#endif VIEW_MODE#]
+ <!-- / table dlna_prop search -->
+ <!-- table dlna_prop edit -->
+ [#if VIEW_MODE="edit_dlna_prop"#]
+   [#inc dlna_prop_edit.html#]
+ [#endif VIEW_MODE#]
+ <!-- / table dlna_prop edit -->
+ <!-- table dlna_prop view --> 
+ [#if VIEW_MODE="view_dlna_prop"#]
+   [#inc dlna_prop_view.html#]
+ [#endif VIEW_MODE#]
+ <!-- / table dlna_prop view -->
+ [#endif DATA_SOURCE#]

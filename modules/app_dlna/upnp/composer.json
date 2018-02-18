@@ -1,0 +1,5 @@
+{
+    "require": {
+        "jalder/upnp": "dev-master"
+    }
+}

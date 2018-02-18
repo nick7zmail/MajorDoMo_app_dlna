@@ -1,0 +1,5 @@
+{
+    "require": {
+        "gravitymedia/ssdp": "dev-master"
+    }
+}
