@@ -1,8 +1,8 @@
 
 <!-- table dlna_dev search -->
 <p>
-<a href="?view_mode=edit_dlna_dev&data_source=<#DATA_SOURCE#>" class="btn btn-default"> <#LANG_ADD#></a>
-<a href="?view_mode=scan_devices&data_source=<#DATA_SOURCE#>" class="btn btn-default"> Сканировать устройства</a>
+<a href="?view_mode=edit_dlna_dev&data_source=<#DATA_SOURCE#>" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i> <#LANG_ADD#></a>
+<a href="?view_mode=scan_devices&data_source=<#DATA_SOURCE#>" class="btn btn-default"><i class="glyphicon glyphicon-search"></i> Сканировать устройства</a>
 </p>
 <table width=100% border=0><tr>
 <td valign=top>
@@ -28,6 +28,11 @@
 <tbody>
 [#begin RESULT#]
 <tr style="height:52px" class="hover_btn2">
+
+<td style="vertical-align:middle; width:52px">[#if LOGO!=""#]<img class="img-circle" src="[#LOGO#]" alt="Device Logo" width="34" height="34">[#else#]
+<img class="img-circle" src="/img/app_dlna/dev_unknown.png" alt="Device Logo" width="34" height="34">
+[#endif LOGO#]</td>
+
  <td style="vertical-align:middle"
   >
   <b>

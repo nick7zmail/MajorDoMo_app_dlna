@@ -10,11 +10,15 @@ if ($res[0]['ID']) {
         // some action for every record if required
 		$rec['UUID']=$obj['UUID'];
 		$rec['TITLE']=$obj['TITLE'];
+		$rec['LOGO']=$obj['LOGO'];
 		$rec['JSON_DATA']=json_encode($obj['JDATA']);
-		$rec_dub=SQLSelect("SELECT * FROM dlna_dev WHERE UUID='".$obj['UUID']."'");
+		$rec_dub=SQLSelectOne("SELECT * FROM dlna_dev WHERE UUID='".$obj['UUID']."'");
 		$total_dub=count($rec_dub);
 		if(!$total_dub) {
 			SQLInsert('dlna_dev', $rec);
+		} else {
+			$rec_dub=$rec;
+			SQLUpdate('dlna_dev', $rec);
 		}
     }
 	$this->redirect("?");
@@ -72,32 +76,32 @@ function getIp($dev)
 function getDefImg($dev)
 {
 //print ("<pre>DIR: " .DIR_MODULES.$this->name );
-    if ($dev["manufacturer"] == "Google Inc." && $dev["modelName"] == "Eureka Dongle") {
-        return "/templates/SSDPFinder/img/chromecast.png";
+	if($dev["iconList"]["icon"]["0"]["url"]) {
+		return substr($dev["presentationURL"], 0, -1). $dev["iconList"]["icon"]["0"]["url"];
+	} elseif ($dev["manufacturer"] == "Google Inc." && $dev["modelName"] == "Eureka Dongle") {
+        return "/templates/app_dlna/img/chromecast.png";
     } elseif (($dev["manufacturer"] == "LG Electronics." || $dev["manufacturer"] == "LG Electronics") && ($dev["modelName"] == "LG TV" || $dev["modelName"] == "LG Smart TV")) {
-        return "/templates/SSDPFinder/img/tv.png";
+        return "/templates/app_dlna/img/tv.png";
     } elseif ($dev["manufacturer"] == "Synology" || $dev["manufacturer"] == "Synology Inc") {
-        return "/templates/SSDPFinder/img/synology.png";
+        return "/templates/app_dlna/img/synology.png";
     } elseif ($dev["manufacturer"] == "Emby" && $dev["modelName"] == "Emby") {
         return $dev["presentationURL"] . $dev["iconList"]["icon"]["4"]["url"];
     } elseif ($dev["manufacturer"] == "Linksys" || $dev["manufacturer"] == "Cisco") {
-        return "/templates/SSDPFinder/img/router.png";
+        return "/templates/app_dlna/img/router.png";
     } elseif ($dev["manufacturer"] == "XBMC Foundation") {
-        return "/templates/SSDPFinder/img/kodi.png";
+        return "/templates/app_dlna/img/kodi.png";
     }elseif ($dev["manufacturer"] == "Bubblesoft") {
-        return "/templates/SSDPFinder/img/bubleupnp.png";
+        return "/templates/app_dlna/img/bubleupnp.png";
     }elseif ($dev["manufacturer"] == "BlackBerry") {
-        return "/templates/SSDPFinder/img/blackberry.jpg";
+        return "/templates/app_dlna/img/blackberry.jpg";
     }elseif ($dev["manufacturer"] == "ASUSTeK Corporation" || $dev["manufacturer"] == "ASUSTeK Computer Inc.") {
-        return "/templates/SSDPFinder/img/ASUSRouter.png";
+        return "/templates/app_dlna/img/ASUSRouter.png";
     }elseif ($dev["manufacturer"] == "HIKVISION") {
-        return "/templates/SSDPFinder/img/hikvision.jpg";
+        return "/templates/app_dlna/img/cam.png";
     }elseif ($dev["manufacturer"] == "Samsung Electronics") {
-        return "/templates/SSDPFinder/img/samsung_printer.png";
-    }
-    else  {
-    // return $dev["presentationURL"] . $dev["iconList"]["icon"]["0"]["url"];
-    return "/templates/SSDPFinder/img/dlna.png";
+        return "/templates/app_dlna/img/samsung_printer.png";
+    }  else  {
+			return "/templates/app_dlna/img/unk.png";
     }
     //
     //  return $result;
