@@ -21,6 +21,22 @@ if ($res[0]['ID']) {
 			SQLUpdate('dlna_dev', $rec);
 		}
     }
+	require_once(DIR_MODULES.$this->name.'/ownlibs/castinphp/Chromecast.php');
+	$cc=Chromecast::scan();
+	foreach ($cc as $obj) {
+		$rec['UUID']=$obj['target'];
+		$rec['TITLE']=$obj['friendlyname'];
+		$rec['LOGO']='/templates/app_dlna/img/chromecast.png';
+		$rec['JSON_DATA']=json_encode($obj);
+		$rec_dub=SQLSelectOne("SELECT * FROM dlna_dev WHERE UUID='".$obj['UUID']."'");
+		$total_dub=count($rec_dub);
+		if(!$total_dub) {
+			SQLInsert('dlna_dev', $rec);
+		} else {
+			$rec_dub=$rec;
+			SQLUpdate('dlna_dev', $rec);
+		}
+	}
 	$this->redirect("?");
     //$out['RESULT'] = $res;
 }
@@ -75,8 +91,7 @@ function getIp($dev)
 }
 function getDefImg($dev)
 {
-//print ("<pre>DIR: " .DIR_MODULES.$this->name );
-	if($dev["iconList"]["icon"]["0"]["url"]) {
+	if($dev["presentationURL"] && $dev["iconList"]["icon"]["0"]["url"]) {
 		return substr($dev["presentationURL"], 0, -1). $dev["iconList"]["icon"]["0"]["url"];
 	} elseif ($dev["manufacturer"] == "Google Inc." && $dev["modelName"] == "Eureka Dongle") {
         return "/templates/app_dlna/img/chromecast.png";
@@ -99,12 +114,10 @@ function getDefImg($dev)
     }elseif ($dev["manufacturer"] == "HIKVISION") {
         return "/templates/app_dlna/img/cam.png";
     }elseif ($dev["manufacturer"] == "Samsung Electronics") {
-        return "/templates/app_dlna/img/samsung_printer.png";
+        return "/templates/app_dlna/img/samsung.png";
     }  else  {
 			return "/templates/app_dlna/img/unk.png";
     }
-    //
-    //  return $result;
 }
 
 
