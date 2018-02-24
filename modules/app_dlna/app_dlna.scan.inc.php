@@ -3,121 +3,100 @@ require_once(DIR_MODULES.$this->name.'/upnp/vendor/autoload.php');
 use jalder\Upnp\Upnp;
 
 $res = Scan();
-if ($res[0]['ID']) {
-    //paging($res, 100, $out); // search result paging
-    $total = count($res);
+if (count($res)) {
     foreach ($res as $obj) {
         // some action for every record if required
+		$rec=SQLSelectOne("SELECT * FROM dlna_dev WHERE UUID='".$obj['UUID']."'");
 		$rec['UUID']=$obj['UUID'];
 		$rec['TITLE']=$obj['TITLE'];
 		$rec['LOGO']=$obj['LOGO'];
 		$rec['JSON_DATA']=json_encode($obj['JDATA']);
-		$rec_dub=SQLSelectOne("SELECT * FROM dlna_dev WHERE UUID='".$obj['UUID']."'");
-		$total_dub=count($rec_dub);
-		if(!$total_dub) {
+		if(!$rec['ID']) {
 			SQLInsert('dlna_dev', $rec);
 		} else {
-			$rec_dub=$rec;
 			SQLUpdate('dlna_dev', $rec);
 		}
     }
-	require_once(DIR_MODULES.$this->name.'/ownlibs/castinphp/Chromecast.php');
+	/*require_once(DIR_MODULES.$this->name.'/ownlibs/castinphp/Chromecast.php');
 	$cc=Chromecast::scan();
 	foreach ($cc as $obj) {
+		$rec=SQLSelectOne("SELECT * FROM dlna_dev WHERE UUID='".$obj['UUID']."'");
 		$rec['UUID']=$obj['target'];
 		$rec['TITLE']=$obj['friendlyname'];
 		$rec['LOGO']='/templates/app_dlna/img/chromecast.png';
 		$rec['JSON_DATA']=json_encode($obj);
-		$rec_dub=SQLSelectOne("SELECT * FROM dlna_dev WHERE UUID='".$obj['UUID']."'");
-		$total_dub=count($rec_dub);
-		if(!$total_dub) {
+		if(!$rec['ID']) {
 			SQLInsert('dlna_dev', $rec);
 		} else {
-			$rec_dub=$rec;
 			SQLUpdate('dlna_dev', $rec);
 		}
-	}
+	}*/
 	$this->redirect("?");
-    //$out['RESULT'] = $res;
 }
 function Scan()
 {
     $upnp = new Upnp();
-    print('searching...' . PHP_EOL);
     $everything = $upnp->discover();
     $result = [];
     foreach ($everything as $device) {
-        $info = $device['description']['device'];
-        if (!array_search_result($result, 'UUID', $info["UDN"])) {
+        if (!array_search_result($result, 'UUID', $device['description']['device']["UDN"])) {
             $result[] = [
-                "ID" => $info["UDN"],
-                "TITLE" => $info["friendlyName"],
-                "ADDRESS" => $info["presentationURL"],
-                "UUID" => $info["UDN"],
-                "DESCRIPTION" => is_array($info["modelDescription"]) ? implode(',', $info["modelDescription"]) : $info["modelDescription"],
-                "TYPE" => explode(":", $info["deviceType"])[3],
-                "LOGO" => getDefImg($info),
-                "SERIAL" => $info["serialNumber"],
-                "MANUFACTURERURL" => $info["manufacturerURL"],
-                "UPDATED" => '',
-                "MODEL" => $info["modelName"],
-                "MANUFACTURER" => $info["manufacturer"],
-                "IP" => getIp($info),
+                "TITLE" => $device['description']['device']["friendlyName"],
+                "UUID" => $device['description']['device']["UDN"],
+                "LOGO" => getDefImg($device),
 				"JDATA"=>$device
             ];
         }
     }
-    /*
-    print("<pre>");
-    print_r($result);
-     print("</pre>");
-    */
     return $result;
 }
 function array_search_result($array, $key, $value)
 {
-    //  global $result;
     foreach ($array as $k => $v) {
         if (array_key_exists($key, $v) && ($v[$key] == $value)) {
             return true;
         }
     }
-    // return $result;;
 }
 function getIp($dev)
 {
-    $result = explode(":", $dev["presentationURL"])[1];
+    $result = explode(":", $dev['description']['device']["presentationURL"])[1];
     return str_replace("//", "", $result);
 }
 function getDefImg($dev)
 {
-	if($dev["presentationURL"] && $dev["iconList"]["icon"]["0"]["url"]) {
-		return substr($dev["presentationURL"], 0, -1). $dev["iconList"]["icon"]["0"]["url"];
-	} elseif ($dev["manufacturer"] == "Google Inc." && $dev["modelName"] == "Eureka Dongle") {
-        return "/templates/app_dlna/img/chromecast.png";
-    } elseif (($dev["manufacturer"] == "LG Electronics." || $dev["manufacturer"] == "LG Electronics") && ($dev["modelName"] == "LG TV" || $dev["modelName"] == "LG Smart TV")) {
-        return "/templates/app_dlna/img/tv.png";
-    } elseif ($dev["manufacturer"] == "Synology" || $dev["manufacturer"] == "Synology Inc") {
-        return "/templates/app_dlna/img/synology.png";
-    } elseif ($dev["manufacturer"] == "Emby" && $dev["modelName"] == "Emby") {
-        return $dev["presentationURL"] . $dev["iconList"]["icon"]["4"]["url"];
-    } elseif ($dev["manufacturer"] == "Linksys" || $dev["manufacturer"] == "Cisco") {
-        return "/templates/app_dlna/img/router.png";
-    } elseif ($dev["manufacturer"] == "XBMC Foundation") {
-        return "/templates/app_dlna/img/kodi.png";
-    }elseif ($dev["manufacturer"] == "Bubblesoft") {
-        return "/templates/app_dlna/img/bubleupnp.png";
-    }elseif ($dev["manufacturer"] == "BlackBerry") {
-        return "/templates/app_dlna/img/blackberry.jpg";
-    }elseif ($dev["manufacturer"] == "ASUSTeK Corporation" || $dev["manufacturer"] == "ASUSTeK Computer Inc.") {
-        return "/templates/app_dlna/img/ASUSRouter.png";
-    }elseif ($dev["manufacturer"] == "HIKVISION") {
-        return "/templates/app_dlna/img/cam.png";
-    }elseif ($dev["manufacturer"] == "Samsung Electronics") {
-        return "/templates/app_dlna/img/samsung.png";
+	if($dev['description']['device']["presentationURL"] && $dev['description']['device']["iconList"]["icon"]["0"]["url"]) {
+		$img_url = substr($dev['description']['device']["presentationURL"], 0, -1). $dev['description']['device']["iconList"]["icon"]["0"]["url"];
+	} elseif ($dev['description']['device']["iconList"]["icon"]["0"]["url"]) {
+		$img_url = str_replace('\\','', $dev["location"]);
+		$parsed_url = parse_url($img_url);
+		$img_url = $parsed_url['scheme'].'://'.$parsed_url['host'].':'.$parsed_url['port'].$dev['description']['device']["iconList"]["icon"]["0"]["url"];
+	} elseif ($dev['description']['device']["manufacturer"] == "Google Inc." && $dev['description']['device']["modelName"] == "Eureka Dongle") {
+        $img_url = "/templates/app_dlna/img/chromecast.png";
+    } elseif (($dev['description']['device']["manufacturer"] == "LG Electronics." || $dev['description']['device']["manufacturer"] == "LG Electronics") && ($dev['description']['device']["modelName"] == "LG TV" || $dev['description']['device']["modelName"] == "LG Smart TV")) {
+        $img_url = "/templates/app_dlna/img/tv.png";
+    } elseif ($dev['description']['device']["manufacturer"] == "Synology" || $dev['description']['device']["manufacturer"] == "Synology Inc") {
+        $img_url = "/templates/app_dlna/img/synology.png";
+    } elseif ($dev['description']['device']["manufacturer"] == "Emby" && $dev['description']['device']["modelName"] == "Emby") {
+        $img_url = $dev["presentationURL"] . $dev["iconList"]["icon"]["4"]["url"];
+    } elseif ($dev['description']['device']["manufacturer"] == "Linksys" || $dev['description']['device']["manufacturer"] == "Cisco") {
+        $img_url = "/templates/app_dlna/img/router.png";
+    } elseif ($dev['description']['device']["manufacturer"] == "XBMC Foundation") {
+        $img_url = "/templates/app_dlna/img/kodi.png";
+    }elseif ($dev['description']['device']["manufacturer"] == "Bubblesoft") {
+        $img_url = "/templates/app_dlna/img/bubleupnp.png";
+    }elseif ($dev['description']['device']["manufacturer"] == "BlackBerry") {
+        $img_url = "/templates/app_dlna/img/blackberry.jpg";
+    }elseif ($dev['description']['device']["manufacturer"] == "ASUSTeK Corporation" || $dev['description']['device']["manufacturer"] == "ASUSTeK Computer Inc.") {
+        $img_url = "/templates/app_dlna/img/ASUSRouter.png";
+    }elseif ($dev['description']['device']["manufacturer"] == "HIKVISION") {
+        $img_url = "/templates/app_dlna/img/cam.png";
+    }elseif ($dev['description']['device']["manufacturer"] == "Samsung Electronics") {
+        $img_url = "/templates/app_dlna/img/samsung.png";
     }  else  {
-			return "/templates/app_dlna/img/unk.png";
+		$img_url = "/templates/app_dlna/img/unk.png";
     }
+	return $img_url;
 }
 
 
