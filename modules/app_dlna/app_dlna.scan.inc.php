@@ -17,7 +17,7 @@ if (count($res)) {
 			SQLUpdate('dlna_dev', $rec);
 		}
     }
-	/*require_once(DIR_MODULES.$this->name.'/ownlibs/castinphp/Chromecast.php');
+	require_once(DIR_MODULES.$this->name.'/ownlibs/castinphp/Chromecast.php');
 	$cc=Chromecast::scan();
 	foreach ($cc as $obj) {
 		$rec=SQLSelectOne("SELECT * FROM dlna_dev WHERE UUID='".$obj['UUID']."'");
@@ -30,7 +30,7 @@ if (count($res)) {
 		} else {
 			SQLUpdate('dlna_dev', $rec);
 		}
-	}*/
+	}
 	$this->redirect("?");
 }
 function Scan()
@@ -65,9 +65,10 @@ function getIp($dev)
 }
 function getDefImg($dev)
 {
-	if($dev['description']['device']["presentationURL"] && $dev['description']['device']["iconList"]["icon"]["0"]["url"]) {
+	/*if($dev['description']['device']["presentationURL"] && $dev['description']['device']["iconList"]["icon"]["0"]["url"]) {
 		$img_url = substr($dev['description']['device']["presentationURL"], 0, -1). $dev['description']['device']["iconList"]["icon"]["0"]["url"];
-	} elseif ($dev['description']['device']["iconList"]["icon"]["0"]["url"]) {
+	} else*/
+	if ($dev['description']['device']["iconList"]["icon"]["0"]["url"]) {
 		$img_url = str_replace('\\','', $dev["location"]);
 		$parsed_url = parse_url($img_url);
 		$img_url = $parsed_url['scheme'].'://'.$parsed_url['host'].':'.$parsed_url['port'].$dev['description']['device']["iconList"]["icon"]["0"]["url"];

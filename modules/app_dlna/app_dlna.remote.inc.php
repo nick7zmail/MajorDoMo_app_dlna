@@ -14,8 +14,11 @@ $renderer=json_decode($properties[$i]['JSON_DATA'], true);
 			$result = $remote->stop();
 		 } elseif($cmd=='unpause'){
 			$result = $remote->unpause();
+		 } elseif($cmd=='next'){
+			$result = $remote->next();
+		 } elseif($cmd=='prev'){
+			$result = $remote->previous();
 		 }
-		 debmes($result);
 		}		
 	} elseif ($property=='playUrl') {
 		$url = $value;
