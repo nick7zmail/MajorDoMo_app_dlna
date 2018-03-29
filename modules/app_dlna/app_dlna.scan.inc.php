@@ -40,11 +40,15 @@ function Scan()
     $result = [];
     foreach ($everything as $device) {
         if (!array_search_result($result, 'UUID', $device['description']['device']["UDN"])) {
-            $result[] = [
-                "TITLE" => $device['description']['device']["friendlyName"],
-                "UUID" => $device['description']['device']["UDN"],
-                "LOGO" => getDefImg($device),
-				"JDATA"=>$device
+		$logo_link = getDefImg($device);
+		$logo_data = file_get_contents($logo_link);
+		$logo_path = './templates/app_dlna/img/'.basename($logo_link);
+		file_put_contents($logo_path, $logo_data);
+		$result[] = [
+                	"TITLE" => $device['description']['device']["friendlyName"],
+                	"UUID" => $device['description']['device']["UDN"],
+                	"LOGO" => $logo_path, //getDefImg($device),
+                	"JDATA"=> $device
             ];
         }
     }
