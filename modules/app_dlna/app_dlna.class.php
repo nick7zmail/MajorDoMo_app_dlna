@@ -277,7 +277,7 @@ dlna_prop -
  dlna_dev: LOCATION varchar(255) NOT NULL DEFAULT ''
  dlna_dev: LOGO varchar(255) NOT NULL DEFAULT ''
  dlna_dev: UUID varchar(255) NOT NULL DEFAULT ''
- dlna_dev: JSON_DATA TEXT NOT NULL DEFAULT ''
+ dlna_dev: JSON_DATA text
  dlna_dev: LINKED_OBJECT varchar(100) NOT NULL DEFAULT ''
  dlna_dev: LINKED_PROPERTY varchar(100) NOT NULL DEFAULT ''
  dlna_prop: ID int(10) unsigned NOT NULL auto_increment
